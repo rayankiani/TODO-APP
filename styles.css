@@ -1376,9 +1376,14 @@ button {
     .modal-body {
         max-height: none;
         flex: 1 1 auto;
+        padding-bottom: 5rem;
     }
     .modal-footer {
         margin-top: auto;
+        position: sticky;
+        bottom: 0;
+        z-index: 2;
+        box-shadow: 0 -8px 20px rgba(15, 23, 42, 0.08);
         padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));
         background: var(--bg-secondary);
     }
