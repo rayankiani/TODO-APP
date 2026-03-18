@@ -1376,19 +1376,15 @@ button {
     .modal-body {
         max-height: none;
         flex: 1 1 auto;
-        padding-bottom: calc(6rem + env(safe-area-inset-bottom));
+        padding-bottom: 1.5rem;
     }
     .modal-footer {
-        margin-top: 0;
-        position: fixed;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 20;
-        box-shadow: 0 -8px 20px rgba(15, 23, 42, 0.12);
-        padding-bottom: calc(1.25rem + env(safe-area-inset-bottom));
+        margin-top: 0.25rem;
+        position: static;
+        box-shadow: none;
         padding-left: 1.5rem;
         padding-right: 1.5rem;
+        padding-bottom: 1.25rem;
         background: var(--bg-secondary);
     }
     .form-row {
