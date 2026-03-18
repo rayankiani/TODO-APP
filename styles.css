@@ -862,6 +862,16 @@ button {
     opacity: 1;
     transition: opacity var(--transition-normal);
 }
+@supports (height: 100svh) {
+    .modal-overlay {
+        height: 100svh;
+    }
+}
+@supports (height: 100dvh) {
+    .modal-overlay {
+        height: 100dvh;
+    }
+}
 .modal-overlay.hidden {
     opacity: 0;
     pointer-events: none;
@@ -1342,12 +1352,18 @@ button {
         display: none;
     }
     .modal-content {
-        height: 100dvh;
+        height: 100svh;
         min-height: 100vh;
-        max-height: 100dvh;
+        max-height: 100svh;
         width: 100vw;
         max-width: none;
         border-radius: 0;
+    }
+    @supports (height: 100dvh) {
+        .modal-content {
+            height: 100dvh;
+            max-height: 100dvh;
+        }
     }
     .modal-header {
         padding-top: calc(1.5rem + env(safe-area-inset-top));
