@@ -37,12 +37,34 @@ function initApp() {
     cacheDOM();
     setupEventListeners();
     initGlobalTooltips();
+    initVisualViewportFix();
     applyTheme(AppState.settings.theme);
     renderCategories();
     renderApp();
     
     // Initialize Lucide Icons
     lucide.createIcons();
+}
+
+/**
+ * Keeps CSS --vvh in sync with the visual viewport on mobile,
+ * so modals stay fully visible when the browser UI or keyboard changes height.
+ */
+function initVisualViewportFix() {
+    const setVvh = () => {
+        const vv = window.visualViewport;
+        const height = vv ? vv.height : window.innerHeight;
+        document.documentElement.style.setProperty('--vvh', `${height}px`);
+    };
+
+    setVvh();
+    window.addEventListener('resize', setVvh);
+    window.addEventListener('orientationchange', setVvh);
+
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', setVvh);
+        window.visualViewport.addEventListener('scroll', setVvh);
+    }
 }
 
 /**

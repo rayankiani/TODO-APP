@@ -56,6 +56,9 @@
     --font-md: clamp(0.95rem, 0.9rem + 0.4vw, 1.05rem);
     --font-lg: clamp(1.1rem, 1.02rem + 0.7vw, 1.35rem);
     --font-xl: clamp(1.35rem, 1.2rem + 1vw, 1.7rem);
+    
+    /* Visual viewport height fallback (updated via JS on mobile) */
+    --vvh: 100vh;
 }
 
 [data-theme="dark"] {
@@ -851,7 +854,7 @@ button {
     top: 0;
     left: 0;
     width: 100vw;
-    height: 100vh;
+    height: var(--vvh, 100vh);
     background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
@@ -864,12 +867,12 @@ button {
 }
 @supports (height: 100svh) {
     .modal-overlay {
-        height: 100svh;
+        height: var(--vvh, 100svh);
     }
 }
 @supports (height: 100dvh) {
     .modal-overlay {
-        height: 100dvh;
+        height: var(--vvh, 100dvh);
     }
 }
 .modal-overlay.hidden {
@@ -1354,17 +1357,17 @@ button {
         display: none;
     }
     .modal-content {
-        height: 100svh;
+        height: var(--vvh, 100svh);
         min-height: 100vh;
-        max-height: 100svh;
+        max-height: var(--vvh, 100svh);
         width: 100vw;
         max-width: none;
         border-radius: 0;
     }
     @supports (height: 100dvh) {
         .modal-content {
-            height: 100dvh;
-            max-height: 100dvh;
+            height: var(--vvh, 100dvh);
+            max-height: var(--vvh, 100dvh);
         }
     }
     .modal-header {
