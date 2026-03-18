@@ -888,9 +888,8 @@ button {
     box-shadow: var(--shadow-lg);
     transform: scale(1);
     transition: transform var(--transition-bounce);
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 .modal-overlay.hidden .modal-content {
     transform: scale(0.95);
