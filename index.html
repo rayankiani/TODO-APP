@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProMinder - Premium Productivity App</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- SortableJS -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- App Container -->
+    <div class="app-container">
+        <!-- Sidebar Overlay for Mobile -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i data-lucide="check-square" class="logo-icon"></i>
+                    <h2>ProMinder</h2>
+                </div>
+                <button class="menu-toggle" id="closeSidebarBtn" aria-label="Close Sidebar">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            
+            <button class="btn-primary add-task-btn" id="newTaskSidebarBtn">
+                <i data-lucide="plus"></i> New Task <kbd>N</kbd>
+            </button>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <h3>Filters</h3>
+                    <ul class="nav-list" id="filterList">
+                        <li class="nav-item active" data-filter="all" data-title="Inbox">
+                            <i data-lucide="inbox"></i> Inbox
+                            <span class="badge">0</span>
+                        </li>
+                        <li class="nav-item" data-filter="today" data-title="Today">
+                            <i data-lucide="calendar"></i> Today
+                            <span class="badge">0</span>
+                        </li>
+                        <li class="nav-item" data-filter="upcoming" data-title="Upcoming">
+                            <i data-lucide="calendar-days"></i> Upcoming
+                        </li>
+                        <li class="nav-item" data-filter="active" data-title="Active">
+                            <i data-lucide="activity"></i> Active
+                        </li>
+                        <li class="nav-item" data-filter="completed" data-title="Completed">
+                            <i data-lucide="check-circle-2"></i> Completed
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="nav-section">
+                    <div class="section-header">
+                        <h3>Categories</h3>
+                        <button class="icon-btn tooltip" data-tooltip="Add Category" id="addCategoryBtn">
+                            <i data-lucide="plus"></i>
+                        </button>
+                    </div>
+                    <ul class="nav-list" id="categoryList">
+                        <!-- Categories dynamically injected here -->
+                    </ul>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="nav-item theme-toggle" id="themeToggleBtn">
+                    <i data-lucide="moon" class="theme-icon-dark"></i>
+                    <i data-lucide="sun" class="theme-icon-light hidden"></i>
+                    <span>Dark Mode</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="header-left">
+                    <button class="menu-toggle" id="openSidebarBtn" aria-label="Open Sidebar">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <h1 class="view-title" id="currentViewTitle">Inbox</h1>
+                </div>
+
+                <div class="header-right">
+                    <div class="search-bar">
+                        <i data-lucide="search" class="search-icon"></i>
+                        <input type="text" id="searchInput" placeholder="Search tasks... (Ctrl+F)" aria-label="Search tasks">
+                        <button class="clear-search hidden" id="clearSearchBtn">
+                            <i data-lucide="x"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="productivity-stats tooltip" data-tooltip="Daily Progress">
+                        <svg class="progress-ring" width="36" height="36">
+                            <circle class="progress-ring-background" stroke-width="3" fill="transparent" r="15" cx="18" cy="18" />
+                            <circle class="progress-ring-circle" id="dailyProgressRing" stroke-width="3" fill="transparent" r="15" cx="18" cy="18" />
+                        </svg>
+                        <span class="stats-text" id="dailyProgressText">0%</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Task Board / List View -->
+            <section class="task-board">
+                <!-- Toolbar (Sorting, Bulk Actions) -->
+                <div class="board-toolbar">
+                    <div class="bulk-actions hidden" id="bulkActionsContainer">
+                        <span class="selection-count" id="selectionCount">0 selected</span>
+                        <button class="btn-secondary btn-sm" id="bulkCompleteBtn">
+                            <i data-lucide="check-square"></i> Complete
+                        </button>
+                        <button class="btn-danger btn-sm" id="bulkDeleteBtn">
+                            <i data-lucide="trash-2"></i> Delete
+                        </button>
+                        <button class="icon-btn btn-sm" id="cancelSelectionBtn">
+                            <i data-lucide="x"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="board-controls">
+                        <div class="sort-dropdown custom-dropdown">
+                            <button class="dropdown-toggle" id="sortToggle">
+                                <i data-lucide="arrow-up-down"></i> <span id="currentSortLabel">Created Date</span>
+                            </button>
+                            <ul class="dropdown-menu" id="sortMenu">
+                                <li data-sort="created">Created Date</li>
+                                <li data-sort="due">Due Date</li>
+                                <li data-sort="priority">Priority</li>
+                                <li data-sort="alpha">Alphabetical</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div class="empty-state hidden" id="emptyState">
+                    <div class="empty-icon-container">
+                        <i data-lucide="clipboard-list" class="empty-icon"></i>
+                    </div>
+                    <h3>Start your day right</h3>
+                    <p>You have no tasks here. Add a task to get started!</p>
+                    <button class="btn-primary" id="emptyStateAddBtn">
+                        Add Task
+                    </button>
+                </div>
+
+                <!-- Task List Container -->
+                <ul class="task-list" id="taskList">
+                    <!-- Tasks dynamically injected here -->
+                </ul>
+            </section>
+        </main>
+
+        <!-- Floating Action Button (Mobile) -->
+        <button class="fab tooltip-left" data-tooltip="Add Task" id="fabAddBtn">
+            <i data-lucide="plus"></i>
+        </button>
+    </div>
+
+    <!-- Modals -->
+    <!-- Task Modal Overlay -->
+    <div class="modal-overlay hidden" id="taskModalOverlay">
+        <div class="modal-content glass-panel" id="taskModal">
+            <div class="modal-header">
+                <h2 id="taskModalTitle">Add New Task</h2>
+                <button class="close-modal icon-btn" id="closeTaskModalBtn">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            
+            <form id="taskForm" class="modal-body">
+                <input type="hidden" id="taskIdInput">
+                <div class="form-group">
+                    <input type="text" id="taskTitleInput" class="form-control title-input" placeholder="What needs to be done?" required autocomplete="off">
+                </div>
+                
+                <div class="form-group">
+                    <textarea id="taskDescInput" class="form-control desc-input" placeholder="Add details or notes..." rows="3"></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label for="taskDueInput"><i data-lucide="calendar"></i> Due Date</label>
+                        <input type="date" id="taskDueInput" class="form-control">
+                    </div>
+                    <div class="form-group half">
+                        <label for="taskPriorityInput"><i data-lucide="flag"></i> Priority</label>
+                        <select id="taskPriorityInput" class="form-control">
+                            <option value="none">None</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                            <option value="urgent">Urgent</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="taskCategoryInput"><i data-lucide="tag"></i> Category</label>
+                    <select id="taskCategoryInput" class="form-control">
+                        <!-- Categories dynamically populated -->
+                    </select>
+                </div>
+            </form>
+            
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelTaskBtn" type="button">Cancel</button>
+                <button class="btn-primary" id="saveTaskBtn" type="submit" form="taskForm">Save Task <kbd>Enter</kbd></button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Category Modal -->
+    <div class="modal-overlay hidden" id="categoryModalOverlay">
+        <div class="modal-content glass-panel modal-sm" id="categoryModal">
+            <div class="modal-header">
+                <h2>Add Category</h2>
+                <button class="close-modal icon-btn" id="closeCatModalBtn">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body form-group">
+                <input type="text" id="categoryNameInput" class="form-control" placeholder="Category Name" autocomplete="off">
+                <div class="color-picker-container mt-3">
+                    <label>Color</label>
+                    <div class="color-options" id="categoryColorPicker">
+                        <div class="color-option" data-color="#3b82f6" style="background-color: #3b82f6;" title="Blue"></div>
+                        <div class="color-option" data-color="#ef4444" style="background-color: #ef4444;" title="Red"></div>
+                        <div class="color-option" data-color="#10b981" style="background-color: #10b981;" title="Green"></div>
+                        <div class="color-option" data-color="#f59e0b" style="background-color: #f59e0b;" title="Yellow"></div>
+                        <div class="color-option" data-color="#8b5cf6" style="background-color: #8b5cf6;" title="Purple"></div>
+                        <div class="color-option" data-color="#ec4899" style="background-color: #ec4899;" title="Pink"></div>
+                        <div class="color-option" data-color="#64748b" style="background-color: #64748b;" title="Slate"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelCatBtn">Cancel</button>
+                <button class="btn-primary" id="saveCatBtn">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
