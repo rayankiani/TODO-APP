@@ -1326,6 +1326,9 @@ button {
 }
 
 @media (max-width: 480px) {
+    .modal-overlay {
+        align-items: stretch;
+    }
     .top-header {
         padding: 0.65rem 0.7rem 0.8rem;
     }
@@ -1339,14 +1342,24 @@ button {
         display: none;
     }
     .modal-content {
-        height: 100vh;
+        height: 100dvh;
+        min-height: 100vh;
+        max-height: 100dvh;
         width: 100vw;
         max-width: none;
         border-radius: 0;
     }
+    .modal-header {
+        padding-top: calc(1.5rem + env(safe-area-inset-top));
+    }
     .modal-body {
         max-height: none;
-        flex: 1;
+        flex: 1 1 auto;
+    }
+    .modal-footer {
+        margin-top: auto;
+        padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));
+        background: var(--bg-secondary);
     }
     .form-row {
         flex-direction: column;
